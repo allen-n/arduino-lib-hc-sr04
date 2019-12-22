@@ -27,8 +27,12 @@ double UltraSonicDistanceSensor::measureDistanceCm(float temperature) {
     digitalWrite(triggerPin, HIGH);
     delayMicroseconds(10);
     digitalWrite(triggerPin, LOW);
+    
+    // Prevent interrupts from ruining pulseIn() timing
+    noInterrupts();
     // Measure the length of echo signal, which is equal to the time needed for sound to go there and back.
     unsigned long durationMicroSec = pulseIn(echoPin, HIGH);
+    interrupts();
 
     double speedOfSoundInCmPerMs = 0.03313 + 0.0000606 * temperature; // Cair ≈ (331.3 + 0.606 ⋅ ϑ) m/s
     double distanceCm = durationMicroSec / 2.0 * speedOfSoundInCmPerMs;
